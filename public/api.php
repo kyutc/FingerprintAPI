@@ -127,7 +127,7 @@ function api_enroll(PDO $db, string $username, string $classification, string $t
 
 function api_get_user_templates(PDO $db, string $username): void {
     $user_id = create_or_get_user_id($db, $username);
-    $query = $db->prepare('SELECT classification, template FROM fingerprints WHERE user_id = ?');
+    $query = $db->prepare('SELECT id, classification, template FROM fingerprints WHERE user_id = ?');
     $query->execute([$user_id]);
     result_out($query->fetchAll());
 }

@@ -73,6 +73,9 @@ switch($api) {
 
         api_get_user_templates($db, $username);
         break;
+    case 'get_all_templates':
+        api_get_all_templates($db);
+        break;
     case 'verify':
     case 'identify':
         error_out(200, "Not implemented");
@@ -129,6 +132,12 @@ function api_get_user_templates(PDO $db, string $username): void {
     $user_id = create_or_get_user_id($db, $username);
     $query = $db->prepare('SELECT id, classification, template FROM fingerprints WHERE user_id = ?');
     $query->execute([$user_id]);
+    result_out($query->fetchAll());
+}
+
+function api_get_all_templates(PDO $db): void {
+    $query = $db->prepare('SELECT fingerprints.id, name, classification, template FROM fingerprints LEFT JOIN users WHERE users.id = user_id');
+    $query->execute();
     result_out($query->fetchAll());
 }
 

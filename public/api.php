@@ -2,6 +2,12 @@
 declare(strict_types = 1);
 header('Content-Type: application/json');
 
+function generic_error($errno, $errstr, $errfile, $errline) {
+    error_out(500, "Unknown generic error.");
+}
+
+set_error_handler('generic_error');
+
 require('config.default.php');
 require('config.php');
 
@@ -129,6 +135,8 @@ function api_enroll(PDO $db, string $username, string $classification, string $t
 }
 
 function api_get_user_templates(PDO $db, string $username): void {
+    if (!check_username_length($username))
+        error_out(401, "Username must be 4-32 characters long.");
     $user_id = create_or_get_user_id($db, $username);
     $query = $db->prepare('SELECT id, classification, template FROM fingerprints WHERE user_id = ?');
     $query->execute([$user_id]);
@@ -141,4 +149,4 @@ function api_get_all_templates(PDO $db): void {
     result_out($query->fetchAll());
 }
 
-error_out(500, "Unknown error.");
+error_out(500, "Unknown runaway error.");
